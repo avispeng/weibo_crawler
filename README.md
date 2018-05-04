@@ -10,7 +10,7 @@ Crawling only 10 pages of posts has been tested for now(with one cookie and one 
 **Libraries needed: requests, BeautifulSoup, pymongo**
 
 **A 'config.py' should be added**
-'''
+```
 HEADERS= {
     'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
     'Accept-Encoding': 'gzip, deflate, br',
@@ -29,5 +29,5 @@ START_URL = 'https://weibo.cn'
 MONGO_URL='localhost'
 MONGO_DB='weibo'
 MONGO_TABLE=USERID
-'''
+```
 Edit Cookie, User-Agent, USERID and any other fields accordingly.
