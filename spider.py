@@ -14,6 +14,27 @@ original_author_pattern = re.compile(r'转发了 <a href=".*?">(.*?)</a>', re.S
 sub_a_pattern = re.compile('<a\shref=.*?>')
 comment_pattern = re.compile('^C_') # id of comment starts with C_
 
+PROXY = None
+PROXIES = None
+
+def get_proxy():
+    global PROXY
+    global PROXIES
+    try:
+        response = requests.get(PROXY_POOL_URL)
+        if response.status_code == 200:
+            PROXY = response.text
+            PROXIES = {
+                'http': 'http://' + PROXY
+            }
+            print('Using proxy ' + PROXY)
+        else:
+            get_proxy()
+    except ConnectionError as e:
+        print('error occurred when getting proxies ', e.args)
+        PROXY = None
+        PROXIES = None
+
 def crawl():
     url = '{url}/{userid}'.format(url=START_URL, userid=USERID)
     # get the total number of pages
@@ -23,7 +44,8 @@ def crawl():
 
     for page in range(1, pages+1):
         try:
-            response = requests.get(url + '?page=' + str(page), headers=HEADERS)
+            get_proxy()
+            response = requests.get(url + '?page=' + str(page), headers=HEADERS, proxies=PROXIES)
             if response.status_code == 200:
                 process_one_page(response.text)
                 print("finishing page " + str(page))
@@ -49,7 +71,7 @@ def process_one_page(response):
     for post in posts:
         if ('http:' in post) and (not 'https:' in post):
             post = post.replace('http', 'https')
-        one_post = requests.get(post, headers=HEADERS, timeout=6)
+        one_post = requests.get(post, headers=HEADERS, timeout=6, proxies=PROXIES)
         process_one_post(one_post.text, post)
 
 
@@ -83,7 +105,7 @@ def process_one_post(response, url):
     # strip off #cmtfrm
     url = url[:-7] + '&page='
     for page in range(1, pages+1):
-        comment_page = requests.get(url+str(page), headers=HEADERS)
+        comment_page = requests.get(url+str(page), headers=HEADERS, proxies=PROXIES)
         soup2 = BeautifulSoup(comment_page.text, 'lxml')
         comments_list = soup2.find_all('div', id=comment_pattern)
         if comments_list and len(comments_list) > 0:
