@@ -1,5 +1,5 @@
 # weibo_crawler
-**Updated on 2018-5-4**
+**Updated on 2018-5-9**
 
 The program can be used to scrape all the posts and comments of the posts(only text) from one user(different from the logged-in one) and store them in MongoDB. 
 
@@ -8,6 +8,8 @@ Crawling only 10 pages of posts has been tested for now(with one cookie and one 
 **Python version: 3.6**
 
 **Libraries needed: requests, BeautifulSoup, pymongo**
+
+**An [IP proxies pool](https://github.com/avispeng/ProxyPool.git) is used in this project**
 
 **A 'config.py' should be added**
 ```
@@ -29,5 +31,7 @@ START_URL = 'https://weibo.cn'
 MONGO_URL='localhost'
 MONGO_DB='weibo'
 MONGO_TABLE=USERID
+
+PROXY_POOL_URL = 'http://localhost:5555/random'
 ```
 Edit Cookie, User-Agent, USERID and any other fields accordingly.
